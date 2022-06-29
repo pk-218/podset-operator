@@ -32,7 +32,7 @@ The Operator Lifecycle Manager (OLM) extends Kubernetes to provide a declarative
 
 2. `config` contains several YAML files, esp. those that are for Kustomize, which is a Kubernetes native configuration management tool. These are not to be used individually or edited.
 
-3. `hack` contaisn a file `boilerplate.go.txt` which is just a license -- I don't see it's purpose tbh.
+3. `hack` contains a file `boilerplate.go.txt` which is just a license. It is the boilerplate that it introducted to every generated code file in a 'hacky' way - hence the name. Different annotations can be provided to Kubebuilder to specify the boilerplate needed for the generated files.
 
 4. After the initialization of the project, time to create our CRD. Use the create api command of the SDK for this, for example -
     ```bash
