@@ -123,8 +123,10 @@ func (r *PodSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		podsToBeDestroyed := availablePods[:difference]
 		for _, soonToBeDestroyedPod := range podsToBeDestroyed {
 			err = r.Client.Delete(context.TODO(), &soonToBeDestroyedPod)
-			log.Log.Error(err, "Failed to delete Pod from PodSet", soonToBeDestroyedPod.Name)
-			return ctrl.Result{}, err
+			if err != nil{
+				log.Log.Error(err, "Failed to delete Pod from PodSet", soonToBeDestroyedPod.Name)
+				return ctrl.Result{}, err
+			}
 		}
 		return ctrl.Result{Requeue: true}, nil
 	}
