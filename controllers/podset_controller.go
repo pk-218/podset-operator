@@ -132,7 +132,7 @@ func (r *PodSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// if there are less pods than number of specified replicas --> scale up
 	if currentAvailablePods < instance.Spec.Replicas {
 		log.Log.Info("Scaling up PodSet", "currently available", currentAvailablePods, "required", instance.Spec.Replicas)
-		pod := newPodForPodSetCustomResource(instance)
+		pod := r.newPodForPodSetCustomResource(instance)
 
 		// set PodSet instance as the owner and controller
 		if err = controllerutil.SetControllerReference(instance, pod, r.Scheme); err != nil {
@@ -152,17 +152,18 @@ func (r *PodSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 func (r *PodSetReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&appv1alpha1.PodSet{}).
+		Owns(&corev1.Pod{}).
 		Complete(r)
 }
 
 // new Pod created for scaling up the PodSet CR
-func newPodForPodSetCustomResource(cr *appv1alpha1.PodSet) *corev1.Pod {
+func (r *PodSetReconciler) newPodForPodSetCustomResource(cr *appv1alpha1.PodSet) *corev1.Pod {
 	labelsForNewPod := map[string]string{
 		"app":     cr.Name,
 		"version": "v0.1",
 	}
 
-	return &corev1.Pod{
+	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: cr.Name + "-pod-",
 			Namespace:    cr.Namespace,
@@ -178,4 +179,6 @@ func newPodForPodSetCustomResource(cr *appv1alpha1.PodSet) *corev1.Pod {
 			},
 		},
 	}
+	ctrl.SetControllerReference(cr, pod, r.Scheme)
+	return pod
 }

@@ -1,3 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/khuspan/github/podset-operator'
 mkdir -p /home/khuspan/github/podset-operator/bin
 GOBIN=/home/khuspan/github/podset-operator/bin go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0
 /home/khuspan/github/podset-operator/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
